@@ -1,0 +1,12 @@
+Senior Project Install Guide
+
+Installations:
+OpenAI API: pip install --upgrade openai
+Google Gemini API: pip install -q -U google-generativeai
+Flask: pip install flask
+Flask-Cors: pip install -U flask-cors
+Dotenv: pip install python-dotenv
+
+How to Run Webpage: python webpage.py
+
+ 

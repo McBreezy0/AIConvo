@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+    
+    <title>Just a Normal Conversation</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var conversation
+        function askQuestion() {
+            var topic = document.getElementById("questionInput").value;
+            startLoading();
+            $.ajax({
+                type: "POST",
+                url: "/begin",
+                data: { topic: topic },
+                success: function(response) {
+                    conversation = response
+                    /*document.getElementById("response").innerHTML = response;*/
+                    endLoading()
+                    displayResponse()
+                }
+            });
+        }
+        function randomQuestion() {
+            var topic = "Give me a Random Topic";
+            startLoading();
+            $.ajax({
+                type: "POST",
+                url: "/begin",
+                data: { topic: topic },
+                success: function(response) {
+                    conversation = response
+                    endLoading()
+                    displayResponse()
+                    /*document.getElementById("response").innerHTML = response;*/
+                }
+            });
+        }
+        function displayResponse() {
+            var text = document.getElementById('response')
+            for (var i = 0; i < conversation.length; i+=2) {
+                text.innerHTML += '<div class="openai_container"><img src="static/images/chatgpt_logo.webp" alt="Avatar"><p>'+ conversation[i] + '</p></div>';
+                if (conversation[i + 1]) {
+                    text.innerHTML += '<div class="gemini_container"><img src="static/images/gemini_logo.png" alt="Avatar"><p>' + conversation[i + 1] + '</p></div>';
+                }
+            }
+            text.innerHTML += '<button class="reset_btn" onclick="resetData()"">Reset</button>'
+        }
+        function resetData() {
+            $.ajax({
+                type:'POST',
+                url:'/reset',
+                success: function(response) {
+                conversation.length = 0;
+                location.reload(true);
+            }
+        })
+    }
+        function startLoading() {
+            var loadingCircle = document.getElementById("loading-circle");
+            loadingCircle.style.display = "block";
+        }
+
+        function endLoading() {
+            var loadingCircle = document.getElementById("loading-circle");
+            loadingCircle.style.display = "none";
+        }
+
+    </script>
+</head>
+<body>
+    <h1 class="input_header">Just A Normal Conversation</h1>
+    <h2 class="input_header">What Should We Talk About?</h2>
+    <div id="loader"></div>
+
+    <div class="input_container">
+        <input class="input" type="text" id="questionInput" placeholder="Type Your Topic Here">
+        <button class="input_btn" onclick="askQuestion()">Ask</button>
+        <h2 class="input_header">Or Generate A Random Topic</h2>
+        <button class="input_btn" onclick="randomQuestion()">Random</button>
+    </div>
+    <div id="loading-circle"></div>
+    <div id="response"></div>
+    
+</body>
+</html>
+
+
